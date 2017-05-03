@@ -36,6 +36,9 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        transition.dismissCompletion = {
+            self.selectedImage!.isHidden = false
+        }
         
     }
     
@@ -109,17 +112,24 @@ class ViewController: UIViewController {
         //present details view controller
         let herbDetails = storyboard!.instantiateViewController(withIdentifier: "HerbDetailsViewController") as! HerbDetailsViewController
         herbDetails.herb = selectedHerb
-        present(herbDetails, animated: true, completion: nil)
         herbDetails.transitioningDelegate = self
+        present(herbDetails, animated: true, completion: nil)
+        
     }
 }
 
 extension ViewController: UIViewControllerTransitioningDelegate {
     func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        transition.originFrame = selectedImage!.superview!.convert(selectedImage!.frame, to: nil)
+        
+        transition.presenting = true
+        selectedImage!.isHidden = true
         return transition
     }
     
     func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return nil
+        transition.presenting = false
+        return transition
+        //return nil
     }
 }
